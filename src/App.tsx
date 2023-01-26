@@ -1,7 +1,9 @@
+import PostsList from './features/posts/PostsList';
+
 function App() {
   return (
     <div>
-      <h1>Hello Vite!</h1>
+      <PostsList />
     </div>
   );
 }
