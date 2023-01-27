@@ -18,6 +18,7 @@ type Post = {
   id: string;
   title: string;
   content: string;
+  userId: string;
 };
 
 const postsSlice = createSlice({
@@ -28,12 +29,13 @@ const postsSlice = createSlice({
       reducer(state, action: PayloadAction<Post>) {
         state.push(action.payload);
       },
-      prepare(title, content) {
+      prepare(title, content, userId) {
         return {
           payload: {
             id: nanoid(),
             title,
             content,
+            userId,
           },
         };
       },
