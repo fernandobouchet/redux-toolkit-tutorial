@@ -31,6 +31,7 @@ const ReactionButtons: React.FC<Post> = ({ post }) => {
         key={name}
         type="button"
         className="reactionButton"
+        style={{ margin: '0 0.1rem' }}
         onClick={() =>
           dispatch(reactionAdded({ postId: post.id, reaction: name }))
         }

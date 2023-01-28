@@ -1,6 +1,13 @@
-import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  nanoid,
+  PayloadAction,
+  createAsyncThunk,
+} from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import axios from 'axios';
 import { sub } from 'date-fns';
+const POSTS_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 type Post = {
   id: string;
@@ -13,36 +20,22 @@ type Post = {
   };
 };
 
-const initialState: Post[] = [
-  {
-    id: '1',
-    title: 'Learning Redux Toolkit',
-    content: "I've heard good things.",
-    userId: '',
-    date: sub(new Date(), { minutes: 20 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0,
-    },
-  },
-  {
-    id: '2',
-    title: 'Slices...',
-    content: 'The more I say slice, the more I want pizza.',
-    userId: '',
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-    reactions: {
-      thumbsUp: 0,
-      wow: 0,
-      heart: 0,
-      rocket: 0,
-      coffee: 0,
-    },
-  },
-];
+type State = {
+  posts: Post[];
+  status: string;
+  error: string | undefined | null;
+};
+
+const initialState: State = {
+  posts: [],
+  status: 'idle',
+  error: null,
+};
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
+  const response = await axios.get(POSTS_URL);
+  return response.data;
+});
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -50,7 +43,7 @@ const postsSlice = createSlice({
   reducers: {
     postAdded: {
       reducer(state, action: PayloadAction<Post>) {
-        state.push(action.payload);
+        state.posts.push(action.payload);
       },
       prepare(title, content, userId) {
         return {
@@ -73,15 +66,41 @@ const postsSlice = createSlice({
     },
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload;
-      const existingPost = state.find((post) => post.id === postId);
+      const existingPost = state.posts.find((post) => post.id === postId);
       if (existingPost) {
         existingPost.reactions[reaction]++;
       }
     },
   },
+  extraReducers(builder) {
+    builder
+      .addCase(fetchPosts.pending, (state, _action) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        let min = 1;
+        const loadedPosts = action.payload.map((post: Post) => {
+          post.date = sub(new Date(), { minutes: min++ }).toISOString();
+          post.reactions = {
+            thumbsUp: 0,
+            hooray: 0,
+            heart: 0,
+            rocket: 0,
+            eyes: 0,
+          };
+          return post;
+        });
+        state.posts = state.posts.concat(loadedPosts);
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
 });
 
-export const selectAllPosts = (state: RootState) => state.posts;
+export const selectAllPosts = (state: RootState) => state.posts.posts;
 
 export const { postAdded, reactionAdded } = postsSlice.actions;
 
