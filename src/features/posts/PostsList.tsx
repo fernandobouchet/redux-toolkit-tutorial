@@ -6,7 +6,7 @@ import {
   getPostsError,
   fetchPosts,
 } from './postsSlice';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AppDispatch } from '../../app/store';
 
 const PostsList = () => {
@@ -15,13 +15,16 @@ const PostsList = () => {
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
 
-  console.log(postsStatus);
+  const effectRan = useRef(false);
 
   useEffect(() => {
-    if (postsStatus === 'idle') {
-      dispatch(fetchPosts());
+    if (effectRan.current === false) {
+      if (postsStatus === 'idle') {
+        dispatch(fetchPosts());
+        effectRan.current = true;
+      }
     }
-  }, [postsStatus]);
+  }, [postsStatus, dispatch]);
 
   let content;
   if (postsStatus === 'loading') {
