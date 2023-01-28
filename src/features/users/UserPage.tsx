@@ -1,5 +1,5 @@
 import { selectUserById } from '../users/usersSlice';
-import { selectAllPosts } from '../posts/postsSlice';
+import { selectPostsByUser } from '../posts/postsSlice';
 import { Link, useParams } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 
@@ -7,10 +7,9 @@ const UserPage = () => {
   const { userId } = useParams();
   const user = useAppSelector((state) => selectUserById(state, userId));
 
-  const postsForUser = useAppSelector((state) => {
-    const allPosts = selectAllPosts(state);
-    return allPosts.filter((post) => post.userId.toString() === userId);
-  });
+  const postsForUser = useAppSelector((state) =>
+    selectPostsByUser(state, userId)
+  );
 
   const postTitles = postsForUser.map((post) => (
     <li key={post.id}>

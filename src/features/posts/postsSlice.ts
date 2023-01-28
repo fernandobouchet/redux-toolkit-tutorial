@@ -1,8 +1,7 @@
 import {
   createSlice,
-  nanoid,
-  PayloadAction,
   createAsyncThunk,
+  createSelector,
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import axios from 'axios';
@@ -155,6 +154,11 @@ export const getCount = (state: RootState) => state.posts.count;
 
 export const selectPostById = (state: RootState, postId: string | undefined) =>
   state.posts.posts.find((post) => post.id.toString() === postId);
+
+export const selectPostsByUser = createSelector(
+  [selectAllPosts, (_state, userId) => userId],
+  (posts, userId) => posts.filter((post) => post.userId.toString() === userId)
+);
 
 export const { increaseCount, reactionAdded } = postsSlice.actions;
 
