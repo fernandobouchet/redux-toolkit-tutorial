@@ -5,6 +5,9 @@ import './index.css';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import 'simpledotcss';
+import { fetchUsers } from './features/users/usersSlice';
+
+store.dispatch(fetchUsers());
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
