@@ -25,12 +25,14 @@ type State = {
   posts: Post[];
   status: string;
   error: string | undefined | null;
+  count: number;
 };
 
 const initialState: State = {
   posts: [],
   status: 'idle',
   error: null,
+  count: 0,
 };
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
@@ -73,35 +75,15 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    postAdded: {
-      reducer(state, action: PayloadAction<Post>) {
-        state.posts.push(action.payload);
-      },
-      prepare(title, content, userId) {
-        return {
-          payload: {
-            id: nanoid(),
-            title,
-            content,
-            date: new Date().toISOString(),
-            reactions: {
-              thumbsUp: 0,
-              wow: 0,
-              heart: 0,
-              rocket: 0,
-              coffee: 0,
-            },
-            userId,
-          },
-        };
-      },
-    },
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload;
       const existingPost = state.posts.find((post) => post.id === postId);
       if (existingPost) {
         existingPost.reactions[reaction]++;
       }
+    },
+    increaseCount(state, _action) {
+      state.count = state.count + 1;
     },
   },
   extraReducers(builder) {
@@ -169,10 +151,11 @@ const postsSlice = createSlice({
 export const selectAllPosts = (state: RootState) => state.posts.posts;
 export const getPostsStatus = (state: RootState) => state.posts.status;
 export const getPostsError = (state: RootState) => state.posts.error;
+export const getCount = (state: RootState) => state.posts.count;
 
 export const selectPostById = (state: RootState, postId: string | undefined) =>
   state.posts.posts.find((post) => post.id.toString() === postId);
 
-export const { postAdded, reactionAdded } = postsSlice.actions;
+export const { increaseCount, reactionAdded } = postsSlice.actions;
 
 export default postsSlice.reducer;
