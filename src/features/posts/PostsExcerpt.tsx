@@ -20,7 +20,7 @@ type Post = {
 const PostsExcerpt: React.FC<Post> = ({ post }) => {
   return (
     <article>
-      <h3>{post.title}</h3>
+      <h2>{post.title}</h2>
       {post.body && <p>{post.body.substring(0, 75)}...</p>}
       <p>
         <PostAuthor userId={post.userId} />
