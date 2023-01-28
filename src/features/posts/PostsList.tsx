@@ -1,5 +1,5 @@
 import PostsExcerpt from './PostsExcerpt';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectAllPosts,
   getPostsStatus,
@@ -7,10 +7,10 @@ import {
   fetchPosts,
 } from './postsSlice';
 import { useEffect, useRef } from 'react';
-import { AppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../app/hooks';
 
 const PostsList = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const posts = useSelector(selectAllPosts);
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);

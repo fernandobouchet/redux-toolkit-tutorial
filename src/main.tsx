@@ -6,13 +6,18 @@ import { store } from './app/store';
 import { Provider } from 'react-redux';
 import 'simpledotcss';
 import { fetchUsers } from './features/users/usersSlice';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 store.dispatch(fetchUsers());
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Router>
+        <Routes>
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </Router>
     </Provider>
   </React.StrictMode>
 );

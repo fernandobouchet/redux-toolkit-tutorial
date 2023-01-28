@@ -13,6 +13,7 @@ type Post = {
   id: string;
   title: string;
   content: string;
+  body?: string;
   userId: string;
   date: string;
   reactions: {
@@ -130,6 +131,9 @@ const postsSlice = createSlice({
 export const selectAllPosts = (state: RootState) => state.posts.posts;
 export const getPostsStatus = (state: RootState) => state.posts.status;
 export const getPostsError = (state: RootState) => state.posts.error;
+
+export const selectPostById = (state: RootState, postId: string | undefined) =>
+  state.posts.posts.find((post) => post.id.toString() === postId);
 
 export const { postAdded, reactionAdded } = postsSlice.actions;
 
