@@ -8,7 +8,7 @@ const EditPostForm = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
 
-  const post = useAppSelector((state) => selectPostById(state, postId));
+  const post = useAppSelector((state) => selectPostById(state, Number(postId)));
   const users = useAppSelector(selectAllUsers);
 
   const [title, setTitle] = useState(post!.title);
