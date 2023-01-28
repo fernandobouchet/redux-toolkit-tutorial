@@ -14,17 +14,11 @@ type Post = {
   title: string;
   content: string;
   body?: string;
-  userId: string;
+  userId: string | number;
   date: string;
   reactions: {
     [key: string]: number;
   };
-};
-
-type InitialPost = {
-  title: string;
-  body: string;
-  userId: string;
 };
 
 type State = {
@@ -46,8 +40,17 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPosts',
-  async (initialPost: InitialPost) => {
+  async (initialPost: Post) => {
     const response = await axios.post(POSTS_URL, initialPost);
+    return response.data;
+  }
+);
+
+export const updatePost = createAsyncThunk(
+  'posts/updatePost',
+  async (initialPost: Post) => {
+    const { id } = initialPost;
+    const response = await axios.put(`${POSTS_URL}/${id}`, initialPost);
     return response.data;
   }
 );
@@ -124,6 +127,17 @@ const postsSlice = createSlice({
         };
         console.log(action.payload);
         state.posts.push(action.payload);
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        if (!action.payload?.id) {
+          console.log(`Update could not complete`);
+          console.log(action.payload);
+          return;
+        }
+        const { id } = action.payload;
+        action.payload.date = new Date().toISOString();
+        const posts = state.posts.filter((post) => post.id !== id);
+        state.posts = [...posts, action.payload];
       });
   },
 });

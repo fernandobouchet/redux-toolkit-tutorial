@@ -2,7 +2,7 @@ import { useAppSelector } from '../../app/hooks';
 import { selectAllUsers } from '../users/usersSlice';
 
 type userId = {
-  userId: string;
+  userId: string | number;
 };
 
 const PostAuthor: React.FC<userId> = ({ userId }) => {

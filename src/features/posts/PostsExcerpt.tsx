@@ -9,7 +9,7 @@ type Post = {
     title: string;
     content: string;
     body?: string | undefined;
-    userId: string;
+    userId: string | number;
     date: string;
     reactions: {
       [key: string]: number;

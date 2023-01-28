@@ -14,7 +14,7 @@ type Post = {
     id: string;
     title: string;
     content: string;
-    userId: string;
+    userId: string | number;
     date: string;
     reactions: {
       [key: string]: number;
