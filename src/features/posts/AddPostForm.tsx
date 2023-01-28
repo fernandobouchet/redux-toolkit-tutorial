@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postAdded } from './postsSlice';
+import { addNewPost } from './postsSlice';
 import { selectAllUsers } from '../users/usersSlice';
+import { AppDispatch } from '../../app/store';
 
 const AddPostForm = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [userId, setuserId] = useState('');
+  const [addRequestStatus, setAddRequestStatus] = useState('idle');
 
   const users = useSelector(selectAllUsers);
 
@@ -19,15 +21,22 @@ const AddPostForm = () => {
   const onAuthorChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setuserId(e.target.value);
 
+  const canSave =
+    [title, content, userId].every(Boolean) && addRequestStatus === 'idle';
+
   const onSavePostClicked = () => {
-    if (title && content) {
-      dispatch(postAdded(title, content, userId));
+    try {
+      setAddRequestStatus('pending');
+      dispatch(addNewPost({ title, body: content, userId })).unwrap();
       setTitle('');
       setContent('');
+      setuserId('');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAddRequestStatus('idle');
     }
   };
-
-  const canSave = Boolean(title) && Boolean(content) && Boolean(userId);
 
   const userOptions = users.map((user) => (
     <option key={user.id} value={user.id}>

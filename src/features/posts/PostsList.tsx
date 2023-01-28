@@ -8,7 +8,6 @@ import {
 } from './postsSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from '../../app/store';
-import { nanoid } from '@reduxjs/toolkit';
 
 const PostsList = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,11 +15,13 @@ const PostsList = () => {
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
 
+  console.log(postsStatus);
+
   useEffect(() => {
     if (postsStatus === 'idle') {
       dispatch(fetchPosts());
     }
-  }, [postsStatus, dispatch]);
+  }, [postsStatus]);
 
   let content;
   if (postsStatus === 'loading') {
@@ -30,7 +31,7 @@ const PostsList = () => {
       .slice()
       .sort((a, b) => b.date.localeCompare(a.date));
     content = orderedPosts.map((post) => (
-      <PostsExcerpt key={nanoid()} post={post} />
+      <PostsExcerpt key={post.id} post={post} />
     ));
   } else if (postsStatus === 'failed') {
     content = <p>{error}</p>;
