@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { addNewPost } from './postsSlice';
 import { selectAllUsers } from '../users/usersSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AddPostForm = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -40,6 +42,7 @@ const AddPostForm = () => {
       setTitle('');
       setContent('');
       setuserId('');
+      navigate('/');
     } catch (error) {
       console.log(error);
     } finally {
